@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+sqlalchemy
+aiosqlite
+cryptography
+httpx
+websockets
+pytest
+python-dotenv
+streamlink
+yt-dlp
+openai

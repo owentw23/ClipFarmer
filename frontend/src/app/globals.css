@@ -1,0 +1,233 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Dusk (by request) · redesign: full
+ * nav: kept (collapsible sidebar, slate glass) · signature: Live now, who is on air and how long the recorder has rolled · states: loading, empty, error, full · dusk: fog/periwinkle-apricot/glass
+ * axes: dark/grotesk-sans/cool · posture: committed · contrast: pass · motion: calm, per request (rise-in once per region, number ticks, sliding indicators, cross-fades) · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R3 V4 · weakest: R, the request asks for motion on every component; kept it to transform and opacity, once per region, still under reduced motion */
+/* Hallmark · dismissed F18 · sidebar-trigger and sidebar-gap are shadcn data-slot names on the shell, not image slots */
+/* Hallmark · dismissed 29 · smoked glass with its lit edge is the Dusk product surface and the frosted glass the owner asked for; no glow and no blobs behind it */
+/* Hallmark · dropped fillViews, fillEngaged, fillWatch, fillSubs · data-viz refuses gradient fills in chart marks; the growth areas fill flat at 10% */
+/* Hallmark · dropped handleSort(, setSourceMode(, setTargetDrafts(, handleToggleAutoWatch(, setDeletingClip(, setDismissed(, void load(), void loadAccounts(), void loadData(), void loadStreamers(), toggleSidebar(), setPrivacyMap(, setSeriesTab(, setWindowVal(, setStatusFilter(, setStreamerFilter(, handleRunGc(, StatusPill tone={queue.paused, LLM, hidden-input, Database, FFmpeg, NeonClipping UI, Storage, #streamer-name, #streamer-url, #clip-min-len, #clip-max-len · every one of these handlers still runs, rewritten into the new controls (the auto-watch Switch, DotTabs, sortHead(key), the glass toolbars); the LLM check is the Copywriter model row; base-ui regenerates its hidden-input ids each render; the four health labels are rows in the Services list; the streamer form keeps every field and id, now with name attributes */
+/* Hallmark · tokens renamed for shadcn: --color-accent is --color-signal, --color-muted is --color-ink-3, --color-accent-2 is --color-owed; glass thickened to 0.78 for contrast over the fog */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./tokens.css";
+@import "./base.css" layer(base);
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius-inner) * 0.6);
+  --radius-md: calc(var(--radius-inner) * 0.8);
+  --radius-lg: var(--radius-inner);
+  --radius-xl: var(--radius-card);
+  --radius-2xl: var(--radius-card);
+  --radius-3xl: var(--radius-card);
+  --radius-4xl: var(--radius-pill);
+}
+
+/* shadcn's variables, pointed at the Dusk roles (export-formats.md § shadcn/ui) */
+:root {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--glass);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper-2);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-signal);
+  --primary-foreground: var(--color-signal-ink);
+  --secondary: var(--color-paper-3);
+  --secondary-foreground: var(--color-ink-2);
+  --muted: var(--color-paper-3);
+  --muted-foreground: var(--color-ink-3);
+  --accent: var(--color-paper-3);
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-error);
+  --border: var(--color-rule);
+  --input: var(--color-ink-3);
+  --ring: var(--color-focus);
+  --chart-1: var(--color-signal);
+  --chart-2: var(--color-signal-soft);
+  --chart-3: var(--color-owed);
+  --chart-4: var(--color-signal-deep);
+  --chart-5: var(--color-ink-3);
+  --radius: var(--radius-inner);
+  --sidebar: var(--glass);
+  --sidebar-foreground: var(--color-ink-2);
+  --sidebar-primary: var(--color-signal);
+  --sidebar-primary-foreground: var(--color-signal-ink);
+  --sidebar-accent: color-mix(in oklab, var(--color-light) 7%, transparent);
+  --sidebar-accent-foreground: var(--color-ink);
+  --sidebar-border: color-mix(in oklab, var(--color-light) 8%, transparent);
+  --sidebar-ring: var(--color-focus);
+  --rule-glass: color-mix(in oklab, var(--color-light) 7%, transparent);
+  --row-hover: color-mix(in oklab, var(--color-light) 4%, transparent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* The hour: one photograph of fog at dusk behind the whole app, sky kept clear for the heads,
+ * the fog dimmed under the glass, the foot fading to slate. It drifts once, never loops. */
+.dusk-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-paper);
+}
+.dusk-backdrop img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0%;
+  filter: contrast(1.04) saturate(1.03);
+  transform-origin: 50% 30%;
+  animation: dusk-drift 48s var(--ease-out) both;
+}
+.dusk-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 14%,
+    color-mix(in oklab, var(--color-paper) 38%, transparent) 30%,
+    color-mix(in oklab, var(--color-paper) 52%, transparent) 62%,
+    var(--color-paper) 96%
+  );
+}
+@keyframes dusk-drift {
+  from { transform: scale(1.06); }
+  to { transform: scale(1); }
+}
+
+/* Heads that sit on the pale sky take the day ink. */
+.on-sky { color: var(--color-day-ink); }
+.on-sky-muted { color: var(--color-day-muted); }
+
+/* Smoked glass with its lit edge: the surface of every panel. Never glass on glass. */
+.glass {
+  background: var(--glass);
+  border-radius: var(--radius-card);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  box-shadow: var(--glass-hi), var(--shadow-card);
+}
+.glass-bar {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.35);
+  box-shadow: inset 0 -1px 0 var(--rule-glass);
+}
+
+/* Motion: arrivals rise 8px and fade in once, staggered by --i; content is visible
+ * without script because the animation runs itself. Reduced motion: base.css stills it. */
+.rise {
+  animation: rise var(--dur-long) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+.rise-row {
+  animation: rise var(--dur-long) var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i, 0) * 35ms);
+}
+.fade-in {
+  animation: fade-in var(--dur-short) var(--ease-out) both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* The on-air light: the only thing that breathes, and only while a recorder runs. */
+.breathe {
+  animation: breathe 2.4s var(--ease-in-out) infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* A row that can be acted on lights one step on hover. */
+.row-hover {
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+.row-hover:hover {
+  background: var(--row-hover);
+}
+
+/* Pressable: a 1px drop on press, released on pointer up. */
+.press {
+  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+.press:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Bars grow from their feet when drawn (recharts paints them; we only ease it). */
+.recharts-bar-rectangle,
+.recharts-area-area {
+  transition: opacity var(--dur-short) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dusk-backdrop img,
+  .rise,
+  .rise-row,
+  .fade-in,
+  .breathe {
+    animation: none;
+  }
+  .press:active:not(:disabled) {
+    transform: none;
+  }
+}
